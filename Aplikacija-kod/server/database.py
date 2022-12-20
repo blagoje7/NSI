@@ -1,13 +1,13 @@
 import hashlib
 import uuid
-import mysql.connector
+import mysql.connector as mysql
 
-conn = mysql.connector.connect(
-        host='127.0.0.1',
+
+conn = mysql.connect(
         user='blagoje',
         password='takovo123_O',
-        database='users.db',
-        charset="utf8mb4"
+        host='127.0.0.1',
+        database='users.db'
     )
 
 
