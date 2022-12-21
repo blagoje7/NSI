@@ -3,6 +3,7 @@ from flask import Flask, request,  render_template
 import jwt
 import database
 
+
 app = Flask(__name__, template_folder='templates')
 
 # Configure the JWT manager
@@ -26,6 +27,9 @@ def login():
     else:
         # If the credentials are correct, create a JWT and return it to the user
         #access_token = encoded(identity=user_id)
+        #   
+        #   TODO: ovde treba staviti da se token ne kreira na osnovu prosledjenih podataka vec iz podataka iz baze
+        #
         payload = {"user_id":user_id,"username":username}
         encoded_jwt = jwt.encode(payload,secret, algorithm="HS256")
 
@@ -38,7 +42,12 @@ def register():
     # Get the username and password from the request
     username = request.json['username']
     password = request.json['password']
-
+    #role = request.json['role_id']
+    #   
+    #   TODO: ovde treba staviti da se token ne kreira na osnovu prosledjenih podataka vec iz podataka iz baze
+    #
+    #role = cursor.execute(''' SELECT role FROM roles WHERE users.role ''')
+    
     # Register the user
     user_id = database.register_user(username, password)
     if 'error' in user_id:
@@ -56,7 +65,7 @@ def home():
 
 @app.route("/users", methods=["POST","GET"])
 def user_table():
-    cursor.execute('''SELECT id,username FROM korisnici.users''')
+    cursor.execute('''SELECT id,username FROM users''')
     users = cursor.fetchall()
     return render_template('userTable.tpl.html', users=users)
 

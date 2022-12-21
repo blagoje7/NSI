@@ -1,3 +1,4 @@
+from datetime import datetime
 import hashlib
 import uuid
 import mysql.connector as mysql
@@ -7,7 +8,7 @@ conn = mysql.connect(
         user='blagoje',
         password='takovo123_O',
         host='127.0.0.1',
-        database='korisnici'
+        database='nsi'
     )
 
 
@@ -28,7 +29,8 @@ def connect():
         CREATE TABLE IF NOT EXISTS users (
             id varchar(50) PRIMARY KEY,
             username text(20) NOT NULL,
-            password text(50) NOT NULL
+            password text(50) NOT NULL,
+            date_registrated datetime NOT NULL
         )
     ''')
 
@@ -45,6 +47,7 @@ def register_user(username, password):
 
     # Generate a unique identifier for the user
     user_id = str(uuid.uuid4())
+    now = datetime.now()
 
     # Check if the username is already in use
     cursor.execute('''SELECT * FROM users WHERE username=%s''', (username,))
@@ -52,7 +55,7 @@ def register_user(username, password):
         return {'error': 'Username already in use'}, 400
 
     # If the username is available, add it to the user store and return a JWT
-    cursor.execute('''INSERT INTO users (id, username, password) VALUES (%s, %s, %s)''', (user_id, username, hashed_password))
+    cursor.execute('''INSERT INTO users (id, username, password, date_registrated) VALUES (%s, %s, %s, %s)''', (user_id, username, hashed_password, now))
     conn.commit()
     return user_id
 
