@@ -1,9 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request,  render_template
 #from jwt import JWTManager, create_access_token, get_jwt_identity
 import jwt
 import database
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 # Configure the JWT manager
 secret = '_W4i(INwFLL>TK:]9gLg.Sv%U(NT:6wxZWz3SGA}\ZcpPE4_i]'
@@ -15,8 +15,8 @@ conn, cursor = database.connect()
 @app.route('/login', methods=['POST'])
 def login():
     # Get the username and password from the request
-    username = request.json['username']
-    password = request.json['password']
+    username = request.form['username']
+    password = request.form['password']
 
     # Verify the user
     user_id = database.verify_user(username, password)
@@ -49,3 +49,16 @@ def register():
         encoded_jwt = jwt.encode(payload,secret, algorithm="HS256")
         #access_token = create_access_token(identity=user_id)
         return {'access_token': encoded_jwt}
+
+@app.route("/", methods=['POST', 'GET'])
+def home():
+    return render_template('index.tpl.html')
+
+@app.route("/users", methods=["POST","GET"])
+def user_table():
+    cursor.execute('''SELECT id,username FROM korisnici.users''')
+    users = cursor.fetchall()
+    return render_template('userTable.tpl.html', users=users)
+
+if __name__ == '__main__':
+    app.run(debug=True)

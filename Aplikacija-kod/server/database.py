@@ -7,7 +7,7 @@ conn = mysql.connect(
         user='blagoje',
         password='takovo123_O',
         host='127.0.0.1',
-        database='users.db'
+        database='korisnici'
     )
 
 
